@@ -1,0 +1,187 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Colour tokens. Values come from the validated reference palette:
+   surfaces #fcfcfb / #1a1a19, sequential blue for magnitude, and the fixed
+   status palette for good/critical. Status colour never carries meaning on
+   its own — every correct/incorrect state also ships an icon and a label,
+   because good↔critical do not clear CVD separation.
+   ───────────────────────────────────────────────────────────────────────── */
+:root {
+  color-scheme: light;
+  --plane: #f9f9f7;
+  --surface: #fcfcfb;
+  --raised: #f2f1ed;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #898781;
+  --line: #e1e0d9;
+  --rule: #c3c2b7;
+
+  --accent: #2a78d6;
+  --accent-soft: #e6effb;
+  --accent-ink: #184f95;
+
+  --good: #0ca30c;
+  --good-soft: #e4f5e4;
+  --good-ink: #006300;
+
+  --critical: #d03b3b;
+  --critical-soft: #fbe9e9;
+  --critical-ink: #9c2020;
+
+  --warning: #fab219;
+  --warning-soft: #fdf3dd;
+  --warning-ink: #7a5400;
+
+  --track: #cde2fb;
+  --shadow: 0 1px 2px rgba(11, 11, 11, 0.05), 0 1px 3px rgba(11, 11, 11, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --plane: #0d0d0d;
+    --surface: #1a1a19;
+    --raised: #232322;
+    --ink: #ffffff;
+    --ink-2: #c3c2b7;
+    --muted: #898781;
+    --line: #2c2c2a;
+    --rule: #383835;
+
+    --accent: #3987e5;
+    --accent-soft: #17263a;
+    --accent-ink: #86b6ef;
+
+    --good: #0ca30c;
+    --good-soft: #12280f;
+    --good-ink: #5fd05f;
+
+    --critical: #d03b3b;
+    --critical-soft: #2e1616;
+    --critical-ink: #f08a8a;
+
+    --warning: #fab219;
+    --warning-soft: #2d2410;
+    --warning-ink: #fac95e;
+
+    /* Recessive on the dark surface: the darkest documented blue step still
+     read as a filled bar when the meter was empty. */
+  --track: #17263a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --plane: #0d0d0d;
+  --surface: #1a1a19;
+  --raised: #232322;
+  --ink: #ffffff;
+  --ink-2: #c3c2b7;
+  --muted: #898781;
+  --line: #2c2c2a;
+  --rule: #383835;
+
+  --accent: #3987e5;
+  --accent-soft: #17263a;
+  --accent-ink: #86b6ef;
+
+  --good: #0ca30c;
+  --good-soft: #12280f;
+  --good-ink: #5fd05f;
+
+  --critical: #d03b3b;
+  --critical-soft: #2e1616;
+  --critical-ink: #f08a8a;
+
+  --warning: #fab219;
+  --warning-soft: #2d2410;
+  --warning-ink: #fac95e;
+
+  /* Recessive on the dark surface: the darkest documented blue step still
+     read as a filled bar when the meter was empty. */
+  --track: #17263a;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--plane);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-line bg-surface;
+    box-shadow: var(--shadow);
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5
+           text-sm font-medium transition-colors
+           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
+           focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-45;
+  }
+  .btn-primary {
+    @apply btn text-white;
+    background: var(--accent);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--accent-ink);
+  }
+  :root[data-theme='dark'] .btn-primary:hover:not(:disabled),
+  :root:not([data-theme='light']) .btn-primary:hover:not(:disabled) {
+    filter: brightness(1.12);
+  }
+  .btn-ghost {
+    @apply btn border border-line bg-surface text-ink2 hover:bg-raised;
+  }
+  .btn-quiet {
+    @apply btn text-ink2 hover:bg-raised;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-line
+           bg-raised px-2.5 py-1 text-xs font-medium text-ink2;
+  }
+
+  .field {
+    @apply w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm
+           text-ink placeholder:text-muted
+           focus:outline focus:outline-2 focus:outline-offset-0 focus:outline-accent;
+  }
+}
+
+/* The meter track is a lighter step of the fill's own ramp. */
+.meter {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+.meter > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width 0.35s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

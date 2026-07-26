@@ -1,0 +1,100 @@
+{
+ "topics": [
+  {
+   "id": "s3",
+   "name": "S3 y almacenamiento de objetos",
+   "blurb": "Clases de almacenamiento, lifecycle, versionado, Object Lock, replicación, cifrado y acceso.",
+   "count": 104
+  },
+  {
+   "id": "storage",
+   "name": "Almacenamiento de bloques y archivos",
+   "blurb": "EBS, EFS, FSx, Storage Gateway: tipos de volumen, IOPS, rendimiento y acceso compartido.",
+   "count": 41
+  },
+  {
+   "id": "compute",
+   "name": "Cómputo y contenedores",
+   "blurb": "EC2, Auto Scaling, Spot/Reserved, Lambda, ECS/EKS/Fargate, Batch y Elastic Beanstalk.",
+   "count": 144
+  },
+  {
+   "id": "network",
+   "name": "Redes y entrega de contenido",
+   "blurb": "VPC, subredes, NAT, endpoints, peering, Transit Gateway, ELB, Route 53, CloudFront.",
+   "count": 118
+  },
+  {
+   "id": "database",
+   "name": "Bases de datos",
+   "blurb": "RDS, Aurora, DynamoDB, ElastiCache, Redshift y bases de datos especializadas.",
+   "count": 89
+  },
+  {
+   "id": "security",
+   "name": "Seguridad, identidad y cumplimiento",
+   "blurb": "IAM, KMS, Secrets Manager, WAF, Shield, GuardDuty, Cognito, Macie e Inspector.",
+   "count": 40
+  },
+  {
+   "id": "integration",
+   "name": "Integración de aplicaciones",
+   "blurb": "SQS, SNS, EventBridge, Step Functions, API Gateway y patrones de desacoplamiento.",
+   "count": 29
+  },
+  {
+   "id": "analytics",
+   "name": "Analítica y streaming",
+   "blurb": "Kinesis, Athena, Glue, EMR, QuickSight, OpenSearch y lagos de datos.",
+   "count": 22
+  },
+  {
+   "id": "management",
+   "name": "Gestión, monitoreo y gobernanza",
+   "blurb": "CloudWatch, CloudTrail, Config, Systems Manager, Organizations y Control Tower.",
+   "count": 24
+  },
+  {
+   "id": "migration",
+   "name": "Migración y transferencia de datos",
+   "blurb": "DataSync, Snow Family, DMS, Transfer Family y estrategias híbridas.",
+   "count": 8
+  },
+  {
+   "id": "deployment",
+   "name": "Despliegue e infraestructura como código",
+   "blurb": "CloudFormation, CDK, Elastic Beanstalk, OpsWorks y servicios de CI/CD.",
+   "count": 5
+  },
+  {
+   "id": "ai",
+   "name": "IA y servicios especializados",
+   "blurb": "Rekognition, Comprehend, Textract, Transcribe, SageMaker y otros servicios gestionados.",
+   "count": 3
+  },
+  {
+   "id": "cost",
+   "name": "Costos y facturación",
+   "blurb": "Cost Explorer, Budgets, Savings Plans, Reserved Instances e informes de uso.",
+   "count": 5
+  }
+ ],
+ "domains": [
+  {
+   "id": "secure",
+   "name": "Arquitecturas seguras"
+  },
+  {
+   "id": "resilient",
+   "name": "Arquitecturas resilientes"
+  },
+  {
+   "id": "performance",
+   "name": "Arquitecturas de alto rendimiento"
+  },
+  {
+   "id": "cost",
+   "name": "Arquitecturas optimizadas en costo"
+  }
+ ]
+}
