@@ -4,3 +4,4 @@ tools/.cache/
 tools/__pycache__/
 .DS_Store
 *.log
+.vercel
