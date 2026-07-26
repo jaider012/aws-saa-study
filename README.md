@@ -88,6 +88,17 @@ Los colores salen de una paleta validada para daltonismo. Como verde y rojo no
 se distinguen con seguridad, **ningún estado depende solo del color**: cada
 opción corregida lleva además icono y etiqueta (`✓ Correcta`, `✗ Tu respuesta`).
 
+## Despliegue
+
+Publicado en Vercel: <https://aws-saa-study-eta.vercel.app>
+
+El proyecto está conectado a este repositorio, así que cada push a `main`
+dispara un despliegue a producción y cada rama genera una preview. Para
+publicar a mano desde local: `npx vercel deploy --prod`.
+
+No hace falta `vercel.json`: la app usa `HashRouter`, así que no hay rutas del
+servidor que reescribir.
+
 ## Nota
 
 Los enunciados y las opciones están en inglés, igual que en el examen; la
