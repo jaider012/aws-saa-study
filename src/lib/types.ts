@@ -47,7 +47,7 @@ export interface Snippet {
   code: string
 }
 
-/** Per-question progress, persisted in localStorage. */
+/** Per-question progress; one IndexedDB record per question. */
 export interface QState {
   seen: number
   correct: number

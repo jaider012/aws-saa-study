@@ -8,6 +8,7 @@ import Home from './pages/Home'
 import Practice from './pages/Practice'
 import Progress from './pages/Progress'
 import Topic from './pages/Topic'
+import { useHydrated } from './lib/store'
 
 type Theme = 'light' | 'dark' | 'system'
 
@@ -95,11 +96,22 @@ function ScrollToTop() {
 }
 
 export default function App() {
+  // Progress loads from IndexedDB asynchronously. Holding the routes back until
+  // it lands avoids showing a page with zeroed-out stats, and guarantees no
+  // component can write to the store before hydration has read it.
+  const hydrated = useHydrated()
+
   return (
     <div className="min-h-full">
       <TopBar />
       <ScrollToTop />
       <main className="mx-auto max-w-6xl px-4 py-8">
+        {!hydrated ? (
+          <div className="flex items-center gap-3 py-16 text-sm text-muted" role="status">
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-line border-t-accent" />
+            Cargando tu progreso…
+          </div>
+        ) : (
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/tema/:id" element={<Topic />} />
@@ -110,6 +122,7 @@ export default function App() {
           <Route path="/buscar" element={<Browse />} />
           <Route path="*" element={<Home />} />
         </Routes>
+        )}
       </main>
       <footer className="mx-auto max-w-6xl px-4 pb-10 pt-2 text-xs text-muted">
         Banco de preguntas construido a partir de tu material de SAA-C03. Los

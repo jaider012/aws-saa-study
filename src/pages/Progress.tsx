@@ -4,11 +4,13 @@ import { Empty, Meter, PageTitle, Stat, pct } from '../components/ui'
 import { DOMAINS, QUESTIONS, TOPICS, byId, questionsByTopic, topicName } from '../lib/data'
 import { statsFor } from '../lib/session'
 import {
-  exportProgress, importProgress, resetProgress, setSettings, stateOf, useStore,
+  exportProgress, importProgress, resetProgress, setSettings, stateOf, storageInfo, useStore,
 } from '../lib/store'
 
 export default function Progress() {
   const store = useStore()
+  // Settled by the time this renders: App holds the routes back until hydration.
+  const storage = storageInfo()
   const overall = statsFor(QUESTIONS)
   const fileRef = useRef<HTMLInputElement>(null)
   const [notice, setNotice] = useState('')
@@ -177,8 +179,10 @@ export default function Progress() {
         {notice && <p className="mt-3 text-sm text-ink2">{notice}</p>}
 
         <p className="mt-4 text-xs text-muted">
-          El progreso vive solo en este navegador (localStorage). Si cambias de equipo,
-          expórtalo y vuelve a importarlo.
+          El progreso vive solo en este navegador ({storage.backend === 'idb' ? 'IndexedDB' : 'localStorage'}
+          {storage.persisted ? ', marcado como persistente' : ''}). El navegador puede borrarlo si
+          limpias datos de navegación o pasas mucho tiempo sin entrar, y no viaja a otros equipos:
+          expórtalo de vez en cuando y vuelve a importarlo donde lo necesites.
         </p>
       </section>
     </>
