@@ -5,3 +5,6 @@ tools/__pycache__/
 .DS_Store
 *.log
 .vercel
+.env
+.env.*
+!.env.example
