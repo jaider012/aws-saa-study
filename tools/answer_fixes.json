@@ -1,33 +1,136 @@
 {
- "_comment": "Correcciones manuales de la clave de respuesta. El TXT de origen solo dejaba una letra en preguntas de opción múltiple, así que el join las marcaba con confidence low. Cada entrada se revisó a mano contra el enunciado. build_data.py las aplica tras el join.",
+ "_comment": "Correcciones manuales de la clave de respuesta. El TXT de origen solo dejaba una letra en preguntas de opción múltiple, así que el join las marcaba con confidence low. Cada entrada se revisó a mano contra el enunciado. build_data.py las aplica tras el join. Las entradas donde correct == was no cambian la respuesta: solo dejan constancia de que se revisó a mano y suben la confianza a high.",
+ "654": {
+  "correct": [
+   "D"
+  ],
+  "was": [
+   "D"
+  ],
+  "why": "Revisada: la clave D es correcta. Solo esa opción sustituye las tres piezas (estático, PHP, Redis) por servicios gestionados multi-AZ."
+ },
  "655": {
-  "correct": ["C", "E"],
-  "was": ["E"],
+  "correct": [
+   "C",
+   "E"
+  ],
+  "was": [
+   "E"
+  ],
   "why": "Choose two: el endpoint público con sticky sessions es el Application Load Balancer (C), y el WAF se asocia a ese endpoint (E)."
  },
  "658": {
-  "correct": ["A", "E"],
-  "was": ["A"],
+  "correct": [
+   "A",
+   "E"
+  ],
+  "was": [
+   "A"
+  ],
   "why": "Choose two: cluster placement group para la menor latencia entre nodos (A) y FSx for NetApp ONTAP, el único con acceso multiprotocolo NFS y SMB (E)."
  },
+ "661": {
+  "correct": [
+   "B"
+  ],
+  "was": [
+   "B"
+  ],
+  "why": "Revisada: la clave B es correcta. RDS Proxy es el pool de conexiones gestionado y solo exige cambiar el endpoint."
+ },
+ "663": {
+  "correct": [
+   "C"
+  ],
+  "was": [
+   "C"
+  ],
+  "why": "Revisada: la clave C es correcta. Restringe S3 por rol (identidad) y RDS por security group; la D limita por VPC endpoint, que permite a toda la VPC, no solo al cluster ECS."
+ },
  "666": {
-  "correct": ["B", "E"],
-  "was": ["B"],
+  "correct": [
+   "B",
+   "E"
+  ],
+  "was": [
+   "B"
+  ],
   "why": "Choose two: RDS for MySQL Multi-AZ para la base de datos (B) y ALB con Auto Scaling group en dos AZ para la capa web sin tocar el código (E)."
  },
+ "667": {
+  "correct": [
+   "C"
+  ],
+  "was": [
+   "A"
+  ],
+  "why": "Un gateway endpoint solo sirve al tráfico que nace dentro de la VPC: es una entrada en la tabla de rutas y no es accesible desde on-premises por Direct Connect ni por VPN. El enunciado exige acceso privado desde la Región y desde on-premises, así que la respuesta es el interface endpoint (PrivateLink), que expone una IP privada alcanzable a través de Direct Connect. S3 sí admite interface endpoints."
+ },
+ "670": {
+  "correct": [
+   "B"
+  ],
+  "was": [
+   "B"
+  ],
+  "why": "Revisada: la clave B es correcta. El consumo es conocido y la tabla se usa 4 h a la semana, así que provisioned sale más barato; on-demand ni siquiera tiene capacity units que configurar."
+ },
  "674": {
-  "correct": ["B", "D"],
-  "was": ["B"],
+  "correct": [
+   "B",
+   "D"
+  ],
+  "was": [
+   "B"
+  ],
   "why": "Choose two: read replica para descargar las lecturas (B) y ElastiCache para cachear los resultados repetidos (D)."
  },
+ "678": {
+  "correct": [
+   "B"
+  ],
+  "was": [
+   "B"
+  ],
+  "why": "Revisada: la clave B es correcta. Solo una customer managed key da control total sobre crear, rotar y deshabilitar."
+ },
  "679": {
-  "correct": ["A", "C", "E"],
-  "was": ["E"],
+  "correct": [
+   "A",
+   "C",
+   "E"
+  ],
+  "was": [
+   "E"
+  ],
   "why": "Choose three: bucket con Object Lock (A), periodo de retención por defecto de 30 días (C) y regla de ciclo de vida que expira los objetos a los 30 días (E). Object Lock ya activa el versionado, así que B es redundante."
  },
+ "680": {
+  "correct": [
+   "A"
+  ],
+  "was": [
+   "A"
+  ],
+  "why": "Revisada: la clave A es correcta. DataSync cubre S3 y EFS y el modo 'solo lo que ha cambiado' es literalmente el requisito."
+ },
+ "682": {
+  "correct": [
+   "A"
+  ],
+  "was": [
+   "A"
+  ],
+  "why": "Revisada: la clave A es correcta. AWS Config detecta y Systems Manager Automation remedia, ambos gestionados."
+ },
  "683": {
-  "correct": ["A", "C"],
-  "was": ["D"],
+  "correct": [
+   "A",
+   "C"
+  ],
+  "was": [
+   "D"
+  ],
   "why": "Choose two: capa web en un Auto Scaling group detrás de un ALB (A) y base de datos en RDS Multi-AZ (C). La clave original marcaba Lambda, que exigiría reescribir la aplicación y contradice 'minimize changes'."
  }
 }

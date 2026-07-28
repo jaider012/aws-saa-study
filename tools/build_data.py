@@ -372,16 +372,17 @@ if FIXES.exists():
     log(f"claves corregidas a mano: {applied}/"
         f"{sum(1 for k in fixes if not k.startswith('_'))}")
 
-# ══════════════════════════ 3b. hand-written explanations for the gaps
-# The source TXT leaves a few hundred questions without any rationale. Those
-# were written by hand into tools/explanations.json (keyed by question number)
-# and are filled in here so a rebuild does not drop them again.
+# ═══════════════════════════════ 3c. hand-written explanations
+# The source TXT leaves a few hundred questions without any rationale, and a
+# handful more where it does not match the answer. Those were written by hand
+# into tools/explanations.json (keyed by question number); the overlay always
+# wins, so a rebuild does not drop or overwrite them.
 EXPL_OVERLAY = HERE / "explanations.json"
 if EXPL_OVERLAY.exists():
     overlay = json.loads(EXPL_OVERLAY.read_text(encoding="utf-8"))
     filled = 0
     for r in merged:
-        if not r["explanation"] and str(r["num"]) in overlay:
+        if str(r["num"]) in overlay:
             r["explanation"] = overlay[str(r["num"])]
             filled += 1
     log(f"explicaciones escritas a mano: {filled}/{len(overlay)}")
