@@ -353,6 +353,25 @@ for num, pq in sorted(pdf_q.items()):
 
 log(f"joined: {len(merged)}  {stats}")
 
+# ═══════════════════════════════ 3b. hand-checked answer-key corrections
+# On several "choose two/three" questions the TXT only names one answer, so
+# the join records a single letter and marks the record low confidence. Those
+# were reviewed by hand in tools/answer_fixes.json and are applied here.
+FIXES = HERE / "answer_fixes.json"
+if FIXES.exists():
+    fixes = json.loads(FIXES.read_text(encoding="utf-8"))
+    applied = 0
+    for r in merged:
+        fix = fixes.get(str(r["num"]))
+        if not fix:
+            continue
+        r["correct"] = sorted(fix["correct"])
+        r["multi"] = len(fix["correct"]) > 1
+        r["confidence"] = "high"          # verified by hand against the stem
+        applied += 1
+    log(f"claves corregidas a mano: {applied}/"
+        f"{sum(1 for k in fixes if not k.startswith('_'))}")
+
 # ══════════════════════════ 3b. hand-written explanations for the gaps
 # The source TXT leaves a few hundred questions without any rationale. Those
 # were written by hand into tools/explanations.json (keyed by question number)

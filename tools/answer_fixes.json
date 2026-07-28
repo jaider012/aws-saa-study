@@ -1,0 +1,33 @@
+{
+ "_comment": "Correcciones manuales de la clave de respuesta. El TXT de origen solo dejaba una letra en preguntas de opción múltiple, así que el join las marcaba con confidence low. Cada entrada se revisó a mano contra el enunciado. build_data.py las aplica tras el join.",
+ "655": {
+  "correct": ["C", "E"],
+  "was": ["E"],
+  "why": "Choose two: el endpoint público con sticky sessions es el Application Load Balancer (C), y el WAF se asocia a ese endpoint (E)."
+ },
+ "658": {
+  "correct": ["A", "E"],
+  "was": ["A"],
+  "why": "Choose two: cluster placement group para la menor latencia entre nodos (A) y FSx for NetApp ONTAP, el único con acceso multiprotocolo NFS y SMB (E)."
+ },
+ "666": {
+  "correct": ["B", "E"],
+  "was": ["B"],
+  "why": "Choose two: RDS for MySQL Multi-AZ para la base de datos (B) y ALB con Auto Scaling group en dos AZ para la capa web sin tocar el código (E)."
+ },
+ "674": {
+  "correct": ["B", "D"],
+  "was": ["B"],
+  "why": "Choose two: read replica para descargar las lecturas (B) y ElastiCache para cachear los resultados repetidos (D)."
+ },
+ "679": {
+  "correct": ["A", "C", "E"],
+  "was": ["E"],
+  "why": "Choose three: bucket con Object Lock (A), periodo de retención por defecto de 30 días (C) y regla de ciclo de vida que expira los objetos a los 30 días (E). Object Lock ya activa el versionado, así que B es redundante."
+ },
+ "683": {
+  "correct": ["A", "C"],
+  "was": ["D"],
+  "why": "Choose two: capa web en un Auto Scaling group detrás de un ALB (A) y base de datos en RDS Multi-AZ (C). La clave original marcaba Lambda, que exigiría reescribir la aplicación y contradice 'minimize changes'."
+ }
+}
