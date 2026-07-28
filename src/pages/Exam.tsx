@@ -38,7 +38,7 @@ export default function Exam() {
         const ok = picked.length > 0 && isAnswerCorrect(q, picked)
         if (ok) correct++
         else wrongIds.push(q.id)
-        if (picked.length) recordAnswer(q.id, ok)
+        if (picked.length) recordAnswer(q.id, ok, picked)
 
         const d = (byDomain[q.domain] ||= { total: 0, correct: 0 })
         d.total++

@@ -23,6 +23,8 @@ const PATHS: Record<string, string> = {
   book: 'M4 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H4zM20 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H20z',
   chevron: 'm9 6 6 6-6 6',
   terminal: 'm5 7 5 5-5 5M13 17h6',
+  minus: 'M5 12h14',
+  swords: 'M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2M14.5 6.5 18 3h3v3l-3.5 3.5M5 14l-2 2v3h3l2-2M5 19l2-2',
 }
 
 export function Icon({

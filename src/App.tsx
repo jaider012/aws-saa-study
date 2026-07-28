@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import { Icon } from './components/ui'
 import Browse from './pages/Browse'
+import Duels from './pages/Duels'
 import Exam from './pages/Exam'
 import Flashcards from './pages/Flashcards'
 import Home from './pages/Home'
@@ -32,6 +33,7 @@ const NAV = [
   { to: '/', label: 'Temas', icon: 'home', end: true },
   { to: '/practica', label: 'Práctica', icon: 'bolt' },
   { to: '/flashcards', label: 'Tarjetas', icon: 'cards' },
+  { to: '/duelos', label: 'Duelos', icon: 'swords' },
   { to: '/simulacro', label: 'Simulacro', icon: 'clipboard' },
   { to: '/progreso', label: 'Progreso', icon: 'chart' },
   { to: '/buscar', label: 'Buscar', icon: 'search' },
@@ -117,6 +119,7 @@ export default function App() {
           <Route path="/tema/:id" element={<Topic />} />
           <Route path="/practica" element={<Practice />} />
           <Route path="/flashcards" element={<Flashcards />} />
+          <Route path="/duelos" element={<Duels />} />
           <Route path="/simulacro" element={<Exam />} />
           <Route path="/progreso" element={<Progress />} />
           <Route path="/buscar" element={<Browse />} />

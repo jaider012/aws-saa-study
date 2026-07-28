@@ -8,6 +8,13 @@ export const TOPICS = (topicsJson as { topics: Topic[] }).topics
 export const DOMAINS = (topicsJson as { domains: Domain[] }).domains
 export const SNIPPETS = snippetsJson as Snippet[]
 
+/**
+ * Fine-grained option labels ("Gateway endpoint", "SQS FIFO queue"). They live
+ * one level below the coarse service chips, and the duel mode prefers them:
+ * the distinctions worth drilling are almost always at this level.
+ */
+export const REFINED = new Set((topicsJson as { refined?: string[] }).refined ?? [])
+
 export const byId = new Map(QUESTIONS.map((q) => [q.id, q]))
 
 export const topicById = new Map(TOPICS.map((t) => [t.id, t]))

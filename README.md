@@ -15,9 +15,14 @@ npm run dev        # http://localhost:5173
 |---|---|
 | **Práctica** | Opción múltiple con corrección y explicación al instante. Teclas `1`-`5` para elegir, `Enter` para comprobar y avanzar, `F` para marcar. |
 | **Tarjetas** | Lees el escenario, respondes de memoria y te calificas. Programa el repaso con repetición espaciada (SM-2 simplificado). |
+| **Duelos** | Un escenario y solo dos candidatos: el servicio correcto y el que sueles confundir con él. Los pares salen de las opciones incorrectas que eliges en Práctica y Simulacro. Teclas `1`/`2` para elegir, `Enter` para avanzar. |
 | **Simulacro** | 20/40/65 preguntas cronometradas, sin corrección hasta el final, repartidas como en el examen real (30% seguridad, 26% resiliencia, 24% rendimiento, 20% costos). Aprobado en 72%. |
 | **Buscar** | Todo el banco filtrable por texto, tema o servicio. Escribe `#124` para ir a una pregunta concreta. |
 | **Progreso** | Acierto y dominio por tema y por dominio del examen, lista de pendientes y exportar/importar. |
+
+Los **duelos** llevan su propio marcador y no mueven el dominio de las preguntas:
+acertar entre dos opciones no es la misma prueba que resolver la pregunta completa
+con cuatro. Un par se retira de la lista tras 4 aciertos seguidos.
 
 Una pregunta cuenta como **dominada** tras dos aciertos seguidos. El progreso
 vive en `localStorage` de tu navegador; en *Progreso* puedes exportarlo a JSON
@@ -46,6 +51,14 @@ verificar se descarta en vez de adivinarse.
 ```bash
 npm run data       # regenera src/data/*.json (requiere pypdf)
 ```
+
+Además del tema y los servicios de cada pregunta, el build etiqueta **los servicios
+de cada opción por separado** (`optionServices`). Esa es la pieza que hace posibles
+los duelos: la lista de servicios de la pregunta no dice de qué opción salió cada
+nombre, y para saber qué confundiste hace falta exactamente eso. Sobre el vocabulario
+de servicios se aplica una capa de refinamiento (`OPTION_REFINEMENTS` en
+`tools/topics.py`) que separa lo que el chip de tema agrupa: gateway endpoint frente a
+interface endpoint, ALB frente a NLB, compliance frente a governance.
 
 Resultado del cruce:
 

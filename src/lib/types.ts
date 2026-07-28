@@ -24,6 +24,12 @@ export interface Question {
   topic: TopicId
   domain: DomainId
   services: string[]
+  /**
+   * Canonical AWS services named in each option, keyed by option letter. The
+   * `services` list above cannot say which option a name came from, and the
+   * duel mode needs exactly that: what you picked vs what was right.
+   */
+  optionServices: Record<string, string[]>
 }
 
 export interface Topic {
@@ -56,6 +62,12 @@ export interface QState {
   lastAt: number
   lastOk: boolean
   flagged?: boolean
+  /**
+   * How many times each wrong option was picked, keyed by the option's
+   * original letter. Absent until the question is answered wrong at least
+   * once. This is what the duel mode mines for confused service pairs.
+   */
+  misses?: Record<string, number>
   /** Lightweight SM-2 state used by the flashcard mode. */
   ease: number
   interval: number
@@ -73,6 +85,15 @@ export interface ExamResult {
   wrongIds: string[]
 }
 
+/** Head-to-head record for one confused service pair. */
+export interface DuelStat {
+  won: number
+  lost: number
+  /** Consecutive wins; 4 or more retires the pair as settled. */
+  streak: number
+  lastAt: number
+}
+
 export interface Settings {
   shuffleOptions: boolean
   instantFeedback: boolean
@@ -82,6 +103,9 @@ export interface Store {
   version: 1
   q: Record<string, QState>
   exams: ExamResult[]
+  /** Duel record per pair id, kept apart from question mastery on purpose:
+   *  a two-way choice is weaker evidence than the real four-option question. */
+  duels: Record<string, DuelStat>
   settings: Settings
   lastTopic?: TopicId
 }

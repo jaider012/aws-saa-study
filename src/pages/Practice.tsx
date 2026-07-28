@@ -71,7 +71,7 @@ export default function Practice() {
   const check = useCallback(() => {
     if (!q || revealed || picked.length !== q.correct.length) return
     const ok = isAnswerCorrect(q, picked)
-    recordAnswer(q.id, ok)
+    recordAnswer(q.id, ok, picked)
     setTally((t) => ({ right: t.right + (ok ? 1 : 0), wrong: t.wrong + (ok ? 0 : 1) }))
     setRevealed(true)
   }, [q, revealed, picked])

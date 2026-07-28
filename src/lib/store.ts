@@ -1,7 +1,7 @@
 import { useCallback, useSyncExternalStore } from 'react'
 import type { Snapshot } from './idb'
 import { idbAvailable, idbReadAll, idbReplaceAll, idbWrite, requestPersistence } from './idb'
-import type { ExamResult, QState, Settings, Store, TopicId } from './types'
+import type { DuelStat, ExamResult, QState, Settings, Store, TopicId } from './types'
 
 /**
  * Progress lives in IndexedDB, but the in-memory copy is the source of truth
@@ -25,6 +25,7 @@ const EMPTY: Store = {
   version: 1,
   q: {},
   exams: [],
+  duels: {},
   settings: { shuffleOptions: true, instantFeedback: true },
 }
 
@@ -53,6 +54,8 @@ function normalise(s: Partial<Store> | null | undefined): Store | null {
     version: 1,
     q: s.q as Record<string, QState>,
     exams: Array.isArray(s.exams) ? s.exams : [],
+    // Absent in progress exported before the duel mode existed.
+    duels: (s.duels && typeof s.duels === 'object' ? s.duels : {}) as Record<string, DuelStat>,
     settings: { ...EMPTY.settings, ...s.settings },
     lastTopic: s.lastTopic,
   }
@@ -62,7 +65,10 @@ function normalise(s: Partial<Store> | null | undefined): Store | null {
 function metaOf(s: Store): Record<string, unknown> {
   // lastTopic is optional; IndexedDB stores the absence as an explicit null so
   // clearing it overwrites the previous value instead of leaving it behind.
-  return { version: 1, settings: s.settings, exams: s.exams, lastTopic: s.lastTopic ?? null }
+  return {
+    version: 1, settings: s.settings, exams: s.exams, duels: s.duels,
+    lastTopic: s.lastTopic ?? null,
+  }
 }
 
 function snapshotOf(s: Store): Snapshot {
@@ -75,6 +81,7 @@ function storeFromSnapshot(snap: Snapshot): Store | null {
     version: 1,
     q: snap.q,
     exams: snap.meta.exams as ExamResult[],
+    duels: snap.meta.duels as Record<string, DuelStat>,
     settings: snap.meta.settings as Settings,
     lastTopic: (snap.meta.lastTopic as TopicId | null) ?? undefined,
   })
@@ -252,7 +259,7 @@ export function isMastered(s: QState) {
 }
 
 // ── writes ─────────────────────────────────────────────────────────────────
-export function recordAnswer(id: string, ok: boolean) {
+export function recordAnswer(id: string, ok: boolean, picked: string[] = []) {
   const now = Date.now()
   const prev = state.q[id] ?? blankState(now)
   const next: QState = {
@@ -262,6 +269,13 @@ export function recordAnswer(id: string, ok: boolean) {
     streak: ok ? prev.streak + 1 : 0,
     lastAt: now,
     lastOk: ok,
+  }
+  // Remember which distractor won, not just that the answer was wrong: the
+  // duel mode is built entirely out of these counts.
+  if (!ok && picked.length) {
+    const misses = { ...(prev.misses ?? {}) }
+    for (const letter of picked) misses[letter] = (misses[letter] ?? 0) + 1
+    next.misses = misses
   }
   // Practice results also feed the review schedule, so the two modes agree on
   // what still needs work.
@@ -312,6 +326,27 @@ export function gradeCard(id: string, grade: 0 | 1 | 2 | 3) {
 export function toggleFlag(id: string) {
   const prev = state.q[id] ?? blankState()
   commit({ ...state, q: { ...state.q, [id]: { ...prev, flagged: !prev.flagged } } }, { q: id })
+}
+
+/**
+ * One duel answered. Kept in the meta store rather than in the question's
+ * QState: winning a two-way choice is not the same evidence as answering the
+ * real question, so it must not move mastery or the review schedule.
+ */
+export function recordDuel(pairId: string, ok: boolean) {
+  const prev = state.duels[pairId] ?? { won: 0, lost: 0, streak: 0, lastAt: 0 }
+  const next: DuelStat = {
+    won: prev.won + (ok ? 1 : 0),
+    lost: prev.lost + (ok ? 0 : 1),
+    streak: ok ? prev.streak + 1 : 0,
+    lastAt: Date.now(),
+  }
+  commit({ ...state, duels: { ...state.duels, [pairId]: next } }, { meta: true })
+}
+
+/** Four wins in a row retires a pair from the "to drill" list. */
+export function isPairSettled(s: DuelStat | undefined) {
+  return !!s && s.streak >= 4
 }
 
 export function saveExam(result: ExamResult) {

@@ -251,3 +251,91 @@ def classify(stem: str, correct_texts, other_texts):
     domain = (max(dscore, key=lambda k: dscore[k]) if best
               else TOPIC_DOMAIN_FALLBACK.get(topic, "resilient"))
     return topic, order[:6], domain
+
+
+# ── option-level refinements ──────────────────────────────────────────────
+# SERVICES is deliberately coarse: it feeds the topic chips, where "VPC
+# Endpoints" is a useful bucket. But the confusions worth drilling live one
+# level below it — a gateway endpoint and an interface endpoint are the same
+# chip and opposite answers. These refinements apply ONLY to option labels, so
+# the topic classification and the existing chips are untouched.
+#   (refined name, regex, parent to replace or None)
+def _r(name, pattern, parent=None):
+    return (name, re.compile(pattern, re.I), parent)
+
+
+OPTION_REFINEMENTS = [
+    _r("Gateway endpoint", r"gateway endpoint", "VPC Endpoints"),
+    _r("Interface endpoint (PrivateLink)", r"interface endpoint|privatelink", "VPC Endpoints"),
+    _r("Application Load Balancer", r"application load balancer|\bALB\b", "Elastic Load Balancing"),
+    _r("Network Load Balancer", r"network load balancer|\bNLB\b", "Elastic Load Balancing"),
+    _r("Gateway Load Balancer", r"gateway load balancer|\bGWLB\b", "Elastic Load Balancing"),
+    _r("FSx for Windows File Server", r"fsx for windows", "Amazon FSx"),
+    _r("FSx for Lustre", r"fsx for lustre", "Amazon FSx"),
+    _r("FSx for NetApp ONTAP", r"fsx for netapp|netapp ontap", "Amazon FSx"),
+    _r("FSx for OpenZFS", r"fsx for openzfs|openzfs", "Amazon FSx"),
+    _r("S3 Standard-IA", r"standard[- ]infrequent access|standard-ia", "Amazon S3"),
+    _r("S3 One Zone-IA", r"one zone[- ]infrequent access|one zone-ia", "Amazon S3"),
+    _r("S3 Glacier Deep Archive", r"deep archive", "S3 Glacier"),
+    _r("S3 Glacier Instant Retrieval", r"glacier instant retrieval", "S3 Glacier"),
+    _r("S3 Glacier Flexible Retrieval", r"glacier flexible retrieval", "S3 Glacier"),
+    _r("Object Lock: compliance", r"compliance mode", "S3 Object Lock"),
+    _r("Object Lock: governance", r"governance mode", "S3 Object Lock"),
+    _r("Object Lock: legal hold", r"legal hold", "S3 Object Lock"),
+    _r("File gateway", r"file gateway", "Storage Gateway"),
+    _r("Volume gateway (cached)", r"cached volume", "Storage Gateway"),
+    _r("Volume gateway (stored)", r"stored volume", "Storage Gateway"),
+    _r("Tape gateway", r"tape gateway", "Storage Gateway"),
+    _r("ECS on Fargate", r"(ecs|elastic container service)[^.]{0,60}fargate|"
+                        r"fargate[^.]{0,60}(ecs|elastic container service)", "Amazon ECS"),
+    _r("ECS on EC2", r"(ecs|elastic container service)[^.]{0,60}(ec2 launch type|ec2 worker)",
+       "Amazon ECS"),
+    _r("Spot Instances", r"spot instance|spot fleet|spot block", "Amazon EC2"),
+    _r("Reserved Instances", r"reserved instance", "Amazon EC2"),
+    _r("On-Demand Instances", r"on-demand instance", "Amazon EC2"),
+    _r("Savings Plans", r"savings plan", "Amazon EC2"),
+    _r("Cluster placement group", r"cluster placement group", "Placement Groups"),
+    _r("Partition placement group", r"partition placement group", "Placement Groups"),
+    _r("Spread placement group", r"spread placement group", "Placement Groups"),
+    _r("SSE-KMS", r"\bSSE-KMS\b|kms keys? \(sse-kms\)", None),
+    _r("SSE-S3", r"\bSSE-S3\b|s3 managed (encryption )?keys", None),
+    _r("SSE-C", r"\bSSE-C\b|customer-provided keys", None),
+    _r("Client-side encryption", r"client-side encryption", None),
+    _r("DynamoDB on-demand mode", r"on-demand (capacity )?mode", "Amazon DynamoDB"),
+    _r("DynamoDB provisioned mode", r"provisioned (capacity )?mode|provisioned capacity",
+       "Amazon DynamoDB"),
+    _r("DynamoDB PITR", r"point-in-time recovery", "Amazon DynamoDB"),
+    _r("DynamoDB global tables", r"global table", "Amazon DynamoDB"),
+    _r("Aurora global database", r"global database", "Amazon Aurora"),
+    _r("Aurora Replica", r"aurora replica", "Amazon Aurora"),
+    _r("RDS Proxy", r"rds proxy", "Amazon RDS"),
+    _r("RDS Custom", r"rds custom", "Amazon RDS"),
+    _r("SQS FIFO queue", r"fifo queue", "Amazon SQS"),
+    _r("SQS standard queue", r"standard queue", "Amazon SQS"),
+    _r("Kinesis Data Streams", r"kinesis data stream", "Amazon Kinesis"),
+    _r("Kinesis Data Firehose", r"kinesis data firehose|firehose", "Amazon Kinesis"),
+    _r("Kinesis Data Analytics", r"kinesis data analytics", "Amazon Kinesis"),
+    _r("Shield Advanced", r"shield advanced", "AWS Shield"),
+    _r("Shield Standard", r"shield standard", "AWS Shield"),
+]
+
+
+def services_in(text):
+    """Every canonical service named in one piece of text, in SERVICES order.
+
+    Used to label each answer option, which is what lets the app tell *which*
+    two services a wrong pick confused — the stem-level service list cannot,
+    because it does not say which option each name came from. Coarse buckets
+    are replaced by their OPTION_REFINEMENTS variant when one matches.
+    """
+    found = [name for name, rx, _ in SERVICES if rx.search(text)]
+    for name, rx, parent in OPTION_REFINEMENTS:
+        if not rx.search(text):
+            continue
+        if parent and parent in found:
+            found[found.index(parent)] = name
+        elif name not in found:
+            found.append(name)
+    # A refinement can fire for two variants of the same parent (an option that
+    # contrasts them); dedupe while keeping order.
+    return list(dict.fromkeys(found))

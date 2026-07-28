@@ -22,7 +22,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from ligature import repair                      # noqa: E402
-from topics import TOPICS, classify, DOMAINS     # noqa: E402
+from topics import TOPICS, classify, services_in, OPTION_REFINEMENTS, DOMAINS   # noqa: E402
 
 HERE = Path(__file__).parent
 ROOT = HERE.parent
@@ -392,6 +392,10 @@ for r in merged:
     correct_texts = [o["text"] for o in r["options"] if o["letter"] in r["correct"]]
     other_texts = [o["text"] for o in r["options"] if o["letter"] not in r["correct"]]
     r["topic"], r["services"], r["domain"] = classify(r["question"], correct_texts, other_texts)
+    # Per-option service labels. The stem-level list above cannot say which
+    # option a name came from, and the duel mode needs exactly that: what you
+    # picked vs what was right.
+    r["optionServices"] = {o["letter"]: services_in(o["text"]) for o in r["options"]}
     r["id"] = f"q{r['num']}"
 
 counts = {}
@@ -442,7 +446,10 @@ OUT.mkdir(parents=True, exist_ok=True)
 (OUT / "questions.json").write_text(
     json.dumps(merged, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 (OUT / "topics.json").write_text(
-    json.dumps({"topics": topics_out, "domains": domains_out},
+    json.dumps({"topics": topics_out, "domains": domains_out,
+                # The fine-grained option labels, so the duel mode can prefer
+                # "Gateway endpoint" over the coarse "VPC Endpoints" bucket.
+                "refined": [name for name, _, _ in OPTION_REFINEMENTS]},
                ensure_ascii=False, indent=1), encoding="utf-8")
 (OUT / "snippets.json").write_text(
     json.dumps(snippets, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
