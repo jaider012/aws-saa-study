@@ -353,6 +353,20 @@ for num, pq in sorted(pdf_q.items()):
 
 log(f"joined: {len(merged)}  {stats}")
 
+# ══════════════════════════ 3b. hand-written explanations for the gaps
+# The source TXT leaves a few hundred questions without any rationale. Those
+# were written by hand into tools/explanations.json (keyed by question number)
+# and are filled in here so a rebuild does not drop them again.
+EXPL_OVERLAY = HERE / "explanations.json"
+if EXPL_OVERLAY.exists():
+    overlay = json.loads(EXPL_OVERLAY.read_text(encoding="utf-8"))
+    filled = 0
+    for r in merged:
+        if not r["explanation"] and str(r["num"]) in overlay:
+            r["explanation"] = overlay[str(r["num"])]
+            filled += 1
+    log(f"explicaciones escritas a mano: {filled}/{len(overlay)}")
+
 # ══════════════════════════════════════════════════════════ 4. tag by topic
 for r in merged:
     correct_texts = [o["text"] for o in r["options"] if o["letter"] in r["correct"]]
